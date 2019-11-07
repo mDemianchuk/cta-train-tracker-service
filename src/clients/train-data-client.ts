@@ -2,6 +2,8 @@ import {FetchHelper} from "../utils/fetch-helper";
 import {TrainStation} from "../models/train-station";
 import {TrainStationMapper} from "../mappers/train-station-mapper";
 import {TrainRouteProvider} from "../utils/train-route-provider";
+import {TrainStopMapper} from "../mappers/train-stop-mapper";
+import {TrainStop} from "../models/train-stop";
 
 export class TrainDataClient {
     private readonly baseUrl: URL;
@@ -16,9 +18,19 @@ export class TrainDataClient {
                 let stationMap: Map<string, TrainStation> = new Map();
                 let mapper: TrainStationMapper = new TrainStationMapper();
                 response.map((json: { [key: string]: string }) => mapper.map(json))
-                    .filter((station: TrainStation | undefined) => station && this.isValidRoute(station, routeShortId))
+                    .filter((station: TrainStation | undefined) => station && this.isValidRoute(station.routeIdList, routeShortId))
                     .forEach((station: TrainStation) => stationMap.set(station.id, station));
                 return Array.from(stationMap.values());
+            });
+    }
+
+    async getStops(routeShortId: string, stationId: string): Promise<TrainStop[]> {
+        return this.getTrainData()
+            .then((response: object[]) => {
+                let mapper: TrainStopMapper = new TrainStopMapper();
+                return response.map((json: { [key: string]: string }) => mapper.map(json))
+                    .filter((stop: TrainStop | undefined) => stop && this.isValidStation(stop, routeShortId, stationId))
+                    .map((stop: TrainStop) => stop);
             });
     }
 
@@ -26,8 +38,13 @@ export class TrainDataClient {
         return FetchHelper.fetch<object[]>(this.baseUrl);
     }
 
-    private isValidRoute(station: TrainStation, routeShortId: string): boolean {
+    private isValidRoute(routeIdList: string[], routeShortId: string): boolean {
         let routeId: string | undefined = TrainRouteProvider.getRoute(routeShortId);
-        return routeId ? station.routeIdList.includes(routeId) : false;
+        return routeId ? routeIdList.includes(routeId) : false;
+    }
+
+    private isValidStation(stop: TrainStop, routeShortId: string, stationId: string): boolean {
+        return stop.stationId === stationId
+            && this.isValidRoute(stop.routeIdList, routeShortId)
     }
 }
