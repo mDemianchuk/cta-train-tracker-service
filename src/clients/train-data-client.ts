@@ -7,9 +7,11 @@ import {TrainStop} from "../models/train-stop";
 
 export class TrainDataClient {
     private readonly baseUrl: URL;
+    private trainDataCache: object[];
 
     constructor() {
         this.baseUrl = new URL('https://data.cityofchicago.org/resource/8pix-ypme.json');
+        this.trainDataCache = [];
     }
 
     async getStations(routeShortId: string): Promise<TrainStation[]> {
@@ -35,7 +37,14 @@ export class TrainDataClient {
     }
 
     private async getTrainData(): Promise<object[]> {
-        return FetchHelper.fetch<object[]>(this.baseUrl);
+        if(this.trainDataCache.length > 0) {
+            return this.trainDataCache;
+        }
+        return FetchHelper.fetch<object[]>(this.baseUrl)
+            .then((trainData: object[]) => {
+                this.trainDataCache = trainData;
+                return trainData;
+            });
     }
 
     private isValidRoute(routeIdList: string[], routeShortId: string): boolean {
