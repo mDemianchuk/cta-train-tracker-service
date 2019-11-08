@@ -1,9 +1,9 @@
 import {FetchHelper} from "../utils/fetch-helper";
 import {TrainStation} from "../models/train-station";
 import {TrainStationMapper} from "../mappers/train-station-mapper";
-import {TrainRouteProvider} from "../utils/train-route-provider";
 import {TrainStopMapper} from "../mappers/train-stop-mapper";
 import {TrainStop} from "../models/train-stop";
+import {TrainRouteIdMapper} from "../mappers/train-route-id-mapper";
 
 export class TrainDataClient {
     private readonly baseUrl: URL;
@@ -37,7 +37,7 @@ export class TrainDataClient {
     }
 
     private async getTrainData(): Promise<object[]> {
-        if(this.trainDataCache.length > 0) {
+        if (this.trainDataCache.length > 0) {
             return this.trainDataCache;
         }
         return FetchHelper.fetch<object[]>(this.baseUrl)
@@ -48,8 +48,8 @@ export class TrainDataClient {
     }
 
     private isValidRoute(routeIdList: string[], routeShortId: string): boolean {
-        let routeId: string | undefined = TrainRouteProvider.getRoute(routeShortId);
-        return routeId ? routeIdList.includes(routeId) : false;
+        let routeId: string = TrainRouteIdMapper.toRouteId(routeShortId);
+        return routeIdList.includes(routeId);
     }
 
     private isValidStation(stop: TrainStop, routeShortId: string, stationId: string): boolean {
