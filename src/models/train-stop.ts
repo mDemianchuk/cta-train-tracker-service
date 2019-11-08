@@ -4,6 +4,7 @@ export class TrainStop {
     readonly stationId: string;
     readonly stationName: string;
     readonly routeIdList: string[];
+    oppositeDirectionStopId: string | null;
 
     constructor(id: string, name: string, stationId: string, stationName: string, routeIdList: string[]) {
         this.id = id;
@@ -11,5 +12,6 @@ export class TrainStop {
         this.stationId = stationId;
         this.stationName = stationName;
         this.routeIdList = routeIdList;
+        this.oppositeDirectionStopId = null;
     }
 }
