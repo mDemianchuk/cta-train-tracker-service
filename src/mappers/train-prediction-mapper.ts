@@ -6,11 +6,12 @@ export class TrainPredictionMapper implements CtaMapper<TrainPrediction> {
     map(json: { [key: string]: any }): TrainPrediction | undefined {
         let prediction;
         if (this.isValid(json)) {
+            let routeId = (json['rt'] as string).toLowerCase();
             prediction = new TrainPrediction(
                 json['rn'],
                 json['stpId'],
                 json['staNm'],
-                json['rt'],
+                routeId,
                 json['stpDe'],
                 json['destNm'],
                 json['arrT'],
