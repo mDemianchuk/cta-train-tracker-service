@@ -1,20 +1,20 @@
 import {CtaMapper} from "./cta-mapper";
 import {TrainStation} from "../models/train-station";
 import {TrainRouteId} from "../models/train-route-id";
-import {TrainRoute} from "../models/train-route";
 import {TrainRouteIdMapper} from "./train-route-id-mapper";
 import {TrainRouteProvider} from "../utils/train-route-provider";
+import {TrainRouteShortId} from "../models/train-route-short-id";
 
 export class TrainStationMapper implements CtaMapper<TrainStation> {
 
     map(json: { [key: string]: any }): TrainStation | undefined {
         let trainStation;
         if (this.isValid(json)) {
-            let routes: TrainRoute[] = Object.values(TrainRouteId)
+            let routeIdList: string[] = TrainRouteProvider.getRouteIdList()
+                .map((routeId: string) => TrainRouteIdMapper.toShortRouteId(routeId))
                 .filter((routeShortId: string) => json.hasOwnProperty(routeShortId) && json[routeShortId])
-                .map((routeShortId: string) => TrainRouteIdMapper.toRouteId(routeShortId))
-                .map((routeId: string) => TrainRouteProvider.getRoute(routeId) as TrainRoute);
-            trainStation = new TrainStation(json['map_id'], json['station_name'], routes);
+                .map((routeShortId: string) => TrainRouteIdMapper.toRouteId(routeShortId));
+            trainStation = new TrainStation(json['map_id'], json['station_name'], routeIdList);
         }
         return trainStation;
     }
@@ -28,7 +28,7 @@ export class TrainStationMapper implements CtaMapper<TrainStation> {
             && json.hasOwnProperty(TrainRouteId.BROWN)
             && json.hasOwnProperty(TrainRouteId.PURPLE)
             && json.hasOwnProperty(TrainRouteId.YELLOW)
-            && json.hasOwnProperty(TrainRouteId.PINK_SHORT)
-            && json.hasOwnProperty(TrainRouteId.ORANGE_SHORT);
+            && json.hasOwnProperty(TrainRouteShortId.PINK)
+            && json.hasOwnProperty(TrainRouteShortId.ORANGE);
     }
 }

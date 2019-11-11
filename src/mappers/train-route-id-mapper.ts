@@ -1,4 +1,5 @@
 import {TrainRouteId} from "../models/train-route-id";
+import {TrainRouteShortId} from "../models/train-route-short-id";
 
 export class TrainRouteIdMapper {
     private constructor() {
@@ -6,19 +7,19 @@ export class TrainRouteIdMapper {
 
     static toShortRouteId(routeId: string): string {
         if (routeId === TrainRouteId.ORANGE) {
-            return TrainRouteId.ORANGE_SHORT;
+            return TrainRouteShortId.ORANGE;
         }
         if (routeId === TrainRouteId.PINK) {
-            return TrainRouteId.PINK_SHORT;
+            return TrainRouteShortId.PINK;
         }
         return routeId;
     }
 
     static toRouteId(shortRouteId: string): string {
-        if (shortRouteId === TrainRouteId.ORANGE_SHORT) {
+        if (shortRouteId === TrainRouteShortId.ORANGE) {
             return TrainRouteId.ORANGE;
         }
-        if (shortRouteId === TrainRouteId.PINK_SHORT) {
+        if (shortRouteId === TrainRouteShortId.PINK) {
             return TrainRouteId.PINK;
         }
         return shortRouteId;

@@ -1,6 +1,5 @@
 import {TrainPredictionClient} from "../clients/train-prediction-client";
 import {TrainDataClient} from "../clients/train-data-client";
-import {TrainRoute} from "../models/train-route";
 import {TrainStation} from "../models/train-station";
 import {TrainStop} from "../models/train-stop";
 import {TrainRouteIdMapper} from "../mappers/train-route-id-mapper";
@@ -9,7 +8,7 @@ import {TrainPrediction} from "../models/train-prediction";
 export class TrainTrackerService {
     private readonly dataClient: TrainDataClient;
     private readonly predictionClient: TrainPredictionClient;
-    private routeListCache: TrainRoute[];
+    private routeIdListCache: string[];
     // <route id, train stations>
     private readonly stationMapCache: Map<string, TrainStation[]>;
     // <route id, Map <station id, train stops>>
@@ -20,21 +19,21 @@ export class TrainTrackerService {
     constructor() {
         this.dataClient = new TrainDataClient();
         this.predictionClient = new TrainPredictionClient();
-        this.routeListCache = [];
+        this.routeIdListCache = [];
         this.stationMapCache = new Map<string, TrainStation[]>();
         this.stopMapCache = new Map<string, Map<string, TrainStop[]>>();
         this.oppositeDirectionStopIdMapCache = new Map<string, string>();
     }
 
-    async getRoutes(): Promise<TrainRoute[]> {
-        let cachedRoutes: TrainRoute[] = this.routeListCache;
-        if (cachedRoutes.length > 0) {
-            return cachedRoutes;
+    async getRoutes(): Promise<string[]> {
+        let cachedRouteIdList: string[] = this.routeIdListCache;
+        if (cachedRouteIdList.length > 0) {
+            return cachedRouteIdList;
         }
         return this.dataClient.getRoutes()
-            .then((routes: TrainRoute[]) => {
-                this.routeListCache = routes;
-                return routes;
+            .then((routeIdList: string[]) => {
+                this.routeIdListCache = routeIdList;
+                return routeIdList;
             });
     }
 

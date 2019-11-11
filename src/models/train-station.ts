@@ -1,13 +1,11 @@
-import {TrainRoute} from "./train-route";
-
 export class TrainStation {
     readonly id: string;
     readonly name: string;
-    readonly routes: TrainRoute[];
+    readonly routeIdList: string[];
 
-    constructor(id: string, name: string, routes: TrainRoute[]) {
+    constructor(id: string, name: string, routeIdList: string[]) {
         this.id = id;
         this.name = name;
-        this.routes = routes;
+        this.routeIdList = routeIdList;
     }
 }

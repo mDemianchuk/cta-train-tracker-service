@@ -4,7 +4,6 @@ import {TrainStationMapper} from "../mappers/train-station-mapper";
 import {TrainStopMapper} from "../mappers/train-stop-mapper";
 import {TrainStop} from "../models/train-stop";
 import {TrainRouteIdMapper} from "../mappers/train-route-id-mapper";
-import {TrainRoute} from "../models/train-route";
 import {TrainRouteProvider} from "../utils/train-route-provider";
 
 export class TrainDataClient {
@@ -16,8 +15,8 @@ export class TrainDataClient {
         this.trainDataCache = [];
     }
 
-    async getRoutes(): Promise<TrainRoute[]> {
-        return new Promise(resolve => resolve(TrainRouteProvider.getRoutes()));
+    async getRoutes(): Promise<string[]> {
+        return new Promise(resolve => resolve(TrainRouteProvider.getRouteIdList()));
     }
 
     async getStations(routeShortId: string): Promise<TrainStation[]> {
@@ -26,7 +25,7 @@ export class TrainDataClient {
                 let stationMap: Map<string, TrainStation> = new Map();
                 let mapper: TrainStationMapper = new TrainStationMapper();
                 response.map((json: { [key: string]: string }) => mapper.map(json))
-                    .filter((station: TrainStation | undefined) => station && this.isValidRoute(station.routes, routeShortId))
+                    .filter((station: TrainStation | undefined) => station && this.isValidRoute(station.routeIdList, routeShortId))
                     .forEach((station: TrainStation) => stationMap.set(station.id, station));
                 return Array.from(stationMap.values());
             });
@@ -53,15 +52,13 @@ export class TrainDataClient {
             });
     }
 
-    private isValidRoute(routes: TrainRoute[], routeShortId: string): boolean {
+    private isValidRoute(routeIdList: string[], routeShortId: string): boolean {
         let routeId: string = TrainRouteIdMapper.toRouteId(routeShortId);
-        return routes
-            .map((route: TrainRoute) => route.id)
-            .includes(routeId);
+        return routeIdList.includes(routeId);
     }
 
     private isValidStation(stop: TrainStop, routeShortId: string, stationId: string): boolean {
         return stop.stationId === stationId
-            && this.isValidRoute(stop.routes, routeShortId)
+            && this.isValidRoute(stop.routeIdList, routeShortId)
     }
 }
