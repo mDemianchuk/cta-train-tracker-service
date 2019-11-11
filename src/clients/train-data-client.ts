@@ -39,12 +39,6 @@ export class TrainDataClient {
                 return response.map((json: { [key: string]: string }) => mapper.map(json))
                     .filter((stop: TrainStop | undefined) => stop && this.isValidStation(stop, routeShortId, stationId))
                     .map((stop: TrainStop) => stop);
-            }).then((stops: TrainStop[]) => {
-                if (stops.length == 2) {
-                    stops[0].oppositeDirectionStopId = stops[1].id;
-                    stops[1].oppositeDirectionStopId = stops[0].id;
-                }
-                return stops;
             });
     }
 
