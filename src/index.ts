@@ -4,10 +4,21 @@ import {TrainRoute} from "./models/train-route";
 import {TrainStation} from "./models/train-station";
 import {TrainStop} from "./models/train-stop";
 import {TrainPrediction} from "./models/train-prediction";
+import swaggerUi from 'swagger-ui-express';
+import * as swaggerDocument from './resources/swagger.json'
+import * as bodyParser from 'body-parser'
 
 const app = express();
 const port = 8080;
 const service = new TrainTrackerService();
+
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
+app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+app.get('/', (req, res) => {
+    res.redirect('/swagger');
+});
 
 app.get("/routes", (req, res) => {
     service.getRoutes()
