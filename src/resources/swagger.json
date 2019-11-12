@@ -186,10 +186,10 @@
           "name": {
             "type": "string"
           },
-          "routes": {
+          "routeIdList": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Route"
+              "type": "string"
             }
           }
         }
@@ -209,10 +209,10 @@
           "stationName": {
             "type": "string"
           },
-          "routes": {
+          "routeIdList": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Route"
+              "type": "string"
             }
           },
           "oppositeDirectionStopId": {
