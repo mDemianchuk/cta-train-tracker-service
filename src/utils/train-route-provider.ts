@@ -7,13 +7,6 @@ export class TrainRouteProvider {
     private constructor() {
     }
 
-    static getRoute(routeId: string): TrainRoute | undefined {
-        if (!TrainRouteProvider.isInitialized()) {
-            TrainRouteProvider.initializeRoutes();
-        }
-        return TrainRouteProvider.ROUTE_MAP.get(routeId);
-    }
-
     static getRoutes(): TrainRoute[] {
         if (!TrainRouteProvider.isInitialized()) {
             TrainRouteProvider.initializeRoutes();
