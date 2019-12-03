@@ -1,5 +1,6 @@
 import {CtaMapper} from "./cta-mapper";
 import {TrainPrediction} from "../models/train-prediction";
+import {TimeHelper} from "../utils/time-helper";
 
 export class TrainPredictionMapper implements CtaMapper<TrainPrediction> {
 
@@ -7,6 +8,8 @@ export class TrainPredictionMapper implements CtaMapper<TrainPrediction> {
         let prediction;
         if (this.isValid(json)) {
             let routeId = (json['rt'] as string).toLowerCase();
+            const arrivalTime: number = TimeHelper.getTimestamp(json['arrT']);
+            const predictionTime: number = TimeHelper.getTimestamp(json['prdt']);
             prediction = new TrainPrediction(
                 json['rn'],
                 json['stpId'],
@@ -14,8 +17,8 @@ export class TrainPredictionMapper implements CtaMapper<TrainPrediction> {
                 routeId,
                 json['stpDe'],
                 json['destNm'],
-                json['arrT'],
-                json['prdt']
+                arrivalTime,
+                predictionTime
             );
         }
         return prediction;
